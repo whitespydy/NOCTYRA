@@ -4,7 +4,7 @@
 
     <application
         android:theme="@android:style/Theme.Material.NoActionBar"
-        android:label="NOCTYRA"
+        android:label="QORVYNTHEXA"
         android:usesCleartextTraffic="false">
 
         <activity

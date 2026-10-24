@@ -1,4 +1,4 @@
-package com.noctyra.voice;
+package com.qorvynthexa.voice;
 
 import android.Manifest;
 import android.app.Activity;
@@ -39,7 +39,7 @@ public class MainActivity extends Activity {
         layout.setBackgroundColor(0xFF10131C);
 
         TextView title = new TextView(this);
-        title.setText("NOCTYRA");
+        title.setText("QORVYNTHEXA");
         title.setTextSize(32);
         title.setTextColor(0xFF75D9FF);
         title.setGravity(Gravity.CENTER);
@@ -60,7 +60,7 @@ public class MainActivity extends Activity {
                 ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
 
         talkButton = new Button(this);
-        talkButton.setText("TALK TO NOCTYRA");
+        talkButton.setText("TALK TO QORVYNTHEXA");
         layout.addView(talkButton);
 
         ScrollView scroll = new ScrollView(this);
@@ -123,7 +123,7 @@ public class MainActivity extends Activity {
             if (results != null && !results.isEmpty()) {
                 String spoken = results.get(0);
                 transcript.setText("You: " + spoken
-                        + "\n\nNOCTYRA: I heard you. My AI conversation engine "
+                        + "\n\nQORVYNTHEXA: I heard you. My AI conversation engine "
                         + "is not connected yet.");
                 status.setText("Speech recognised.");
 
@@ -132,7 +132,7 @@ public class MainActivity extends Activity {
                             "I heard you. My conversation engine is not connected yet.",
                             TextToSpeech.QUEUE_FLUSH,
                             null,
-                            "noctyra-response");
+                            "qorvynthexa-response");
                 }
             } else {
                 status.setText("No speech was recognised. Try again.");
