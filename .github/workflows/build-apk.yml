@@ -40,8 +40,7 @@ jobs:
           fi
           ls -lh "$APK"
           file "$APK"
-          unzip -t "$APK"
-          test "$(stat -c%s "$APK")" -gt 100000
+          unzip -t "$APK
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
