@@ -1,3 +1,5 @@
+
+
 name: Build QORVYNTHEXA APK
 
 on:
@@ -19,16 +21,31 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Build debug APK
+      - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.13'
 
-      - name: Assemble APK
-        run: gradle assembleDebug
+      - name: Build APK
+        run: gradle --stacktrace assembleDebug
+
+      - name: Verify APK
+        run: |
+          APK="app/build/outputs/apk/debug/app-debug.apk"
+          echo "Checking APK output..."
+          if [ ! -f "$APK" ]; then
+            echo "ERROR: APK was not created."
+            find app/build/outputs -type f
+            exit 1
+          fi
+          ls -lh "$APK"
+          file "$APK"
+          unzip -t "$APK"
+          test "$(stat -c%s "$APK")" -gt 100000
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: QORVYNTHEXA-debug-APK
           path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
