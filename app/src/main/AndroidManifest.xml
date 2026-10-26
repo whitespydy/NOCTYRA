@@ -1,6 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <queries>
+        <package android:name="com.android.chrome" />
+        <package android:name="com.whatsapp" />
+        <package android:name="com.google.android.youtube" />
+        <package android:name="com.google.android.deskclock" />
+    </queries>
+
+
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+<uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
 
     <application
         android:theme="@android:style/Theme.Material.NoActionBar"
