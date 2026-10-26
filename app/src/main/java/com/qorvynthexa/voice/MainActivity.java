@@ -2,6 +2,7 @@ package com.qorvynthexa.voice;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -31,6 +32,19 @@ public class MainActivity extends Activity {
     private TextView transcript;
     private TextToSpeech tts;
     private boolean ttsReady = false;
+    private String selectedLanguage = "en-GB";
+
+    private final String[] languageNames = {
+        "British English", "Arabic", "French", "Russian", "German",
+        "Afrikaans", "isiZulu", "isiXhosa", "Sesotho", "Setswana",
+        "Sepedi", "Xitsonga", "Tshivenda", "Siswati", "isiNdebele"
+    };
+
+    private final String[] languageTags = {
+        "en-GB", "ar", "fr-FR", "ru-RU", "de-DE",
+        "af-ZA", "zu-ZA", "xh-ZA", "st-ZA", "tn-ZA",
+        "nso-ZA", "ts-ZA", "ve-ZA", "ss-ZA", "nr-ZA"
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +77,26 @@ public class MainActivity extends Activity {
         layout.addView(transcript, new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, 0, 1));
 
+        Button languageButton = new Button(this);
+        languageButton.setText("SELECT LANGUAGE");
+        layout.addView(languageButton);
+
+        languageButton.setOnClickListener(v ->
+            new AlertDialog.Builder(MainActivity.this)
+                .setTitle("QORVYNTHEXA language")
+                .setSingleChoiceItems(languageNames,
+                    java.util.Arrays.asList(languageTags).indexOf(selectedLanguage),
+                    (dialog, which) -> {
+                        selectedLanguage = languageTags[which];
+                        setTtsLanguage(selectedLanguage);
+                        status.setText("Selected: " + languageNames[which]
+                            + ". Speech recognition support depends on your device.");
+                        dialog.dismiss();
+                    })
+                .setNegativeButton("Cancel", null)
+                .show()
+        );
+
         Button talkButton = new Button(this);
         talkButton.setText("TALK TO QORVYNTHEXA");
         layout.addView(talkButton);
@@ -73,18 +107,29 @@ public class MainActivity extends Activity {
 
         tts = new TextToSpeech(this, result -> {
             if (result == TextToSpeech.SUCCESS) {
-                int language = tts.setLanguage(Locale.UK);
-                ttsReady = language != TextToSpeech.LANG_MISSING_DATA
-                        && language != TextToSpeech.LANG_NOT_SUPPORTED;
-                status.setText(ttsReady
-                        ? "Ready. Tap and give a command."
-                        : "English speech output unavailable.");
+                setTtsLanguage(selectedLanguage);
+                status.setText("Ready. Choose a language, then tap to speak.");
             } else {
                 status.setText("Speech output could not start.");
             }
         });
 
         talkButton.setOnClickListener(v -> startListening());
+    }
+
+    private void setTtsLanguage(String languageTag) {
+        if (tts == null) {
+            ttsReady = false;
+            return;
+        }
+        Locale locale = Locale.forLanguageTag(languageTag);
+        int result = tts.setLanguage(locale);
+        ttsReady = result != TextToSpeech.LANG_MISSING_DATA
+                && result != TextToSpeech.LANG_NOT_SUPPORTED;
+        if (!ttsReady) {
+            status.setText("Speech voice unavailable for " + languageTag
+                    + ". Install a compatible voice in Android settings.");
+        }
     }
 
     private void startListening() {
@@ -104,7 +149,7 @@ public class MainActivity extends Activity {
         Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
                 RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-GB");
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, selectedLanguage);
         intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
 
         status.setText("Listening...");
@@ -190,6 +235,52 @@ public class MainActivity extends Activity {
             } catch (Exception e) {
                 respond("Android could not open the alarm screen.");
             }
+            return;
+        }
+
+        // QORVYNTHEXA_MULTILINGUAL_GREETINGS
+        String greetingReply = null;
+
+        if (command.equals("hello") || command.equals("hello there")) {
+            greetingReply = "Hello! How are you doing?";
+        } else if (command.equals("hi") || command.equals("hey")) {
+            greetingReply = "Hi! How are you doing?";
+        } else if (command.equals("good morning")) {
+            greetingReply = "Good morning! How are you?";
+        } else if (command.equals("habari") || command.equals("habari yako")
+                || command.equals("hujambo")) {
+            greetingReply = "Nzuri, asante! Wewe je?";
+        } else if (command.equals("jambo")) {
+            greetingReply = "Jambo! Habari yako?";
+        } else if (command.equals("bonjour") || command.equals("salut")) {
+            greetingReply = command.equals("salut")
+                    ? "Salut ! Comment ça va ?" : "Bonjour ! Comment allez-vous ?";
+        } else if (command.equals("bonsoir")) {
+            greetingReply = "Bonsoir ! Comment allez-vous ?";
+        } else if (command.equals("привет") || command.equals("здравствуйте")) {
+            greetingReply = command.equals("привет")
+                    ? "Привет! Как дела?" : "Здравствуйте! Как вы поживаете?";
+        } else if (command.equals("guten tag") || command.equals("hallo")) {
+            greetingReply = "Hallo! Wie geht es dir?";
+        } else if (command.equals("guten morgen")) {
+            greetingReply = "Guten Morgen! Wie geht es dir?";
+        } else if (command.equals("hallo") || command.equals("hoe gaan dit")) {
+            greetingReply = "Hallo! Hoe gaan dit?";
+        } else if (command.equals("sawubona") || command.equals("sanibonani")) {
+            greetingReply = "Yebo, sawubona! Unjani?";
+        } else if (command.equals("molo") || command.equals("molweni")) {
+            greetingReply = "Molo! Unjani?";
+        } else if (command.equals("dumela") || command.equals("lumela")) {
+            greetingReply = "Dumela! O kae?";
+        } else if (command.equals("مرحبا") || command.equals("أهلا")
+                || command.equals("اهلا")) {
+            greetingReply = "مرحباً! كيف حالك؟";
+        } else if (command.equals("السلام عليكم")) {
+            greetingReply = "وعليكم السلام! كيف حالك؟";
+        }
+
+        if (greetingReply != null) {
+            respond(greetingReply);
             return;
         }
 
