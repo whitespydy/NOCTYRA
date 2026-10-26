@@ -107,6 +107,8 @@ public class MainActivity extends Activity {
 
         tts = new TextToSpeech(this, result -> {
             if (result == TextToSpeech.SUCCESS) {
+                tts.setPitch(0.90f);
+                tts.setSpeechRate(0.92f);
                 setTtsLanguage(selectedLanguage);
                 status.setText("Ready. Choose a language, then tap to speak.");
             } else {
@@ -334,8 +336,7 @@ public class MainActivity extends Activity {
                 respond("Okay. No further action taken.");
                 return;
             default:
-                respond("I don't have that command yet. Say help to hear "
-                        + "the commands I support.");
+                respond("I didn't understand that.");
         }
     }
 
