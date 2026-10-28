@@ -1,6 +1,6 @@
 
 
-name: Build QORVYNTHEXA APK
+name: Build ZØRTH APK
 
 on:
   workflow_dispatch:
@@ -45,6 +45,6 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: QORVYNTHEXA-debug-APK
+          name: ZORTH-debug-APK
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
